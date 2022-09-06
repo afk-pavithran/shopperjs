@@ -8,6 +8,10 @@ class UserModel extends Model {
         return 'users'
     }
 
+    static get userId(): number {
+        return this.userId
+    }
+
     static get jsonSchema() : JSONSchema {
         return {
             type: 'object',
