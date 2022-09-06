@@ -24,4 +24,7 @@ const createDBFunction = async () => {
     }
 }
 
-export default createDBFunction()
+
+import knex from '../knexfile'
+
+export default knex

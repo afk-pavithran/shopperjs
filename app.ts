@@ -6,11 +6,10 @@ import Logger from './Utils/logger'
 dotenv.config()
 
 
-import db from './db'
 const app: Express = express()
-db
 const port = process.env.port || 3000
 
+app.use(express.json())
 app.get('/', (req: Request, res: Response) => {
     res.json({msg: 'Initial Response'})
 })
