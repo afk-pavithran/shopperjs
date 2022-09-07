@@ -12,7 +12,7 @@ class BcryptHelper {
     }
 
     async createHashedPassword() : Promise<string> {
-        const salt = await genSalt()
+        const salt = await BcryptHelper.getSalt()
         const hashedPassword = await bcrypt.hash(this.password, salt)
         return hashedPassword
     }

@@ -5,6 +5,7 @@ import {UserModel} from '../models'
 import Logger from '../Utils/logger'
 import dotenv from 'dotenv'
 import BcryptHelper from '../Utils/bcryptHelper'
+import JWTHelper from '../Utils/JWTHelper'
 
 dotenv.config()
 
@@ -51,4 +52,16 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
     }
 }
 
+
+export const JWTVerify = async (req: Request, res: Response, next: NextFunction)  => {
+    const {token} = req.body
+    const JWTObj = new JWTHelper()
+    const tokenData = await JWTObj.verifyToken(token)
+    if (tokenData.isValid) {
+        res.status(200).json(tokenData)
+    }
+    else {
+        res.status(400).json({error: 'Wrong or Expired Token'})
+    }
+}
 
