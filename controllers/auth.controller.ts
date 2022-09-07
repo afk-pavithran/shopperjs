@@ -18,7 +18,6 @@ export const registerUser = async (req: Request, res: Response, next: NextFuncti
         const user = await UserModel.default.query().insert({username, email, password: hashedPassword})
         // @ts-ignore:next-line
         const tokenData = {email, userId: user.id}
-
         const jwtToken = process.env.JWT_TOKEN || 'JWT_TOKEN_KEY'
         const token = jwt.sign(tokenData, jwtToken, {expiresIn: '24h'})
         console.log(token)
@@ -32,7 +31,27 @@ export const registerUser = async (req: Request, res: Response, next: NextFuncti
 
 export const loginUser = async (req: Request, res: Response, next: NextFunction) => {
     const {password, email} = req.body
-    res.status(409).json({error: 'username or email Already Exist'})
+
+    // const user = await UserModel.default.query().select('email', 'password', 'id')
+    //                 .where('email', '=', email)
+    const user = await UserModel.default.query().findOne({email})
+    if (!user) {
+        res.status(404).json({error: 'User Not Found'})
+    } else {
+    // @ts-ignore:next-line
+    bcrypt.compare(password, user.password, (err, result) => {
+        if (result) {
+            // @ts-ignore:next-line
+            const tokenData = {email, userId: user.id}
+            const jwtToken = process.env.JWT_TOKEN || 'JWT_TOKEN_KEY'
+            const token = jwt.sign(tokenData, jwtToken, {expiresIn: '24h'})
+            res.status(200).json({token})
+        }
+        else {
+            res.status(400).json({error: 'Invalid Credentials'})
+        }
+    })
+    }
 }
 
 
