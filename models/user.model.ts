@@ -4,6 +4,12 @@ import knex from '../db'
 Model.knex(knex)
 
 class UserModel extends Model {
+    
+    id!: number
+    password!: string
+    username!: string
+    email!: string
+
     static get tableName(): string {
         return 'users'
     }
