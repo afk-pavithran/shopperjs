@@ -58,8 +58,6 @@ const config: { [key: string]: Knex.Config } = {
 
 };
 
-// module.exports = config;
+export default config
 
-import knex from 'knex'
-const  knexObj = knex(config.development)
-export default knexObj
+

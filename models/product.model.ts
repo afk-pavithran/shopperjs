@@ -31,3 +31,5 @@ class ProductModel extends Model {
         }
     }
 }
+
+export default ProductModel

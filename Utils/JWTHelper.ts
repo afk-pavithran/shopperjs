@@ -22,7 +22,7 @@ class JWTHelper {
         return secretKey
     }
 
-    signToken(email:string, id:number) : string {
+    signToken(email:string, id:string) : string {
         const token: string = jwt.sign({email, id}, JWTHelper.getSecretKey(), {expiresIn: '48h'})
         return token
     }
