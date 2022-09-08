@@ -1,6 +1,4 @@
 import { Request, Response, NextFunction } from 'express'
-// import bcrypt from 'bcrypt'
-import jwt from 'jsonwebtoken'
 import {UserModel} from '../models'
 import Logger from '../Utils/logger'
 import dotenv from 'dotenv'
@@ -17,9 +15,8 @@ export const registerUser = async (req: Request, res: Response, next: NextFuncti
     const hashedPassword = await bcryptObj.createHashedPassword()
     try {
         const user = await UserModel.default.query().insert({username, email, password: hashedPassword})
-        const tokenData = {email, userId: user.id}
-        const jwtToken = process.env.JWT_TOKEN || 'JWT_TOKEN_KEY'
-        const token = jwt.sign(tokenData, jwtToken, {expiresIn: '24h'})
+        const JWTObj = new JWTHelper()
+        const token = JWTObj.signToken(email, user.id)
         res.json({token}).status(200)
     }
     catch (err) {
@@ -36,21 +33,18 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
         res.status(404).json({error: 'User Not Found'})
     } else {
     const bcryptObj = new BcryptHelper(password)
-    const bcrypt = bcryptObj.getBcrypt()
     
-    bcrypt.compare(password, user.password, (err, result) => {
-        if (result) {
-            const tokenData = {email, userId: user.id}
-            const jwtToken = process.env.JWT_TOKEN || 'JWT_TOKEN_KEY'
-            const token = jwt.sign(tokenData, jwtToken, {expiresIn: '24h'})
-            res.status(200).json({token})
-        }
-        else {
-            res.status(400).json({error: 'Invalid Credentials'})
-        }
-    })
+    const isValid = await bcryptObj.compareHashPassword(user.password)
+    
+    if (isValid) {
+        const JWTObj = new JWTHelper()
+        const token = JWTObj.signToken(email, user.id)
+        res.status(200).json({token})
     }
-}
+    else {
+        res.status(400).json({error: 'Invalid Credentials'})
+    }
+} }
 
 
 export const JWTVerify = async (req: Request, res: Response, next: NextFunction)  => {

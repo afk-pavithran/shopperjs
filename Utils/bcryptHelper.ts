@@ -16,6 +16,20 @@ class BcryptHelper {
         const hashedPassword = await bcrypt.hash(this.password, salt)
         return hashedPassword
     }
+
+    async compareHashPassword (hashedPassword: string) : Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            bcrypt.compare(this.password, hashedPassword, (err, res) => {
+                if (res) {
+                    resolve(true)
+                }
+                else {
+                    resolve(false)
+                }
+            })
+        })
+    }
+
     getBcrypt() {
         return bcrypt
     }
