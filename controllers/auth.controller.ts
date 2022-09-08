@@ -76,6 +76,7 @@ export const createSeller = async (req: Request, res: Response, next: NextFuncti
         res.json({token}).status(200)
     }
     catch (err) {
+        console.log(err)
         Logger.error('Failed to insert Seller')
         res.status(409).json({error: 'email Already Exist'})
     }

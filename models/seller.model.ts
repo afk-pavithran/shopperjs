@@ -12,6 +12,10 @@ class SellerModel extends Model {
     sellerId!: string
     accountType!: string
 
+    static get tableName(): string {
+        return 'sellers'
+    }
+
     static get jsonSchema () : JSONSchema {
         return {
             type: 'object',
