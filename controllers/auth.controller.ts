@@ -5,48 +5,9 @@ import Logger from '../Utils/logger'
 import dotenv from 'dotenv'
 import BcryptHelper from '../Utils/bcryptHelper'
 import JWTHelper from '../Utils/JWTHelper'
+import CustomerModel from '../models/customer.model'
 
 dotenv.config()
-
-// export const registerUser = async (req: Request, res: Response, next: NextFunction) => {
-//     Logger.info(req.body)
-
-//     const {username, password, email} = req.body
-//     const bcryptObj = new BcryptHelper(password)
-//     const hashedPassword = await bcryptObj.createHashedPassword()
-//     try {
-//         const user = await UserModel.default.query().insert({username, email, password: hashedPassword})
-//         const JWTObj = new JWTHelper()
-//         const token = JWTObj.signToken(email, user.id)
-//         res.json({token}).status(200)
-//     }
-//     catch (err) {
-//         Logger.error('Failed to insert User')
-//         res.status(409).json({error: 'username or email Already Exist'})
-//     }
-// }
-
-// export const loginUser = async (req: Request, res: Response, next: NextFunction) => {
-//     const {password, email} = req.body
-
-//     const user = await UserModel.default.query().findOne({email})
-//     if (!user) {
-//         res.status(404).json({error: 'User Not Found'})
-//     } else {
-//     const bcryptObj = new BcryptHelper(password)
-    
-//     const isValid = await bcryptObj.compareHashPassword(user.password)
-    
-//     if (isValid) {
-//         const JWTObj = new JWTHelper()
-//         const token = JWTObj.signToken(email, user.id)
-//         res.status(200).json({token})
-//     }
-//     else {
-//         res.status(400).json({error: 'Invalid Credentials'})
-//     }
-// } }
-
 
 export const JWTVerify = async (req: Request, res: Response, next: NextFunction)  => {
     const {token} = req.body
@@ -60,6 +21,26 @@ export const JWTVerify = async (req: Request, res: Response, next: NextFunction)
     }
 }
 
+
+export const createCustomer = async (req: Request, res: Response, next: NextFunction) => {
+    const {email, password} = req.body
+    const id: string = uuidv4()
+
+    const bcryptObj = new BcryptHelper(password)
+    const hashedPassword = await bcryptObj.createHashedPassword()
+
+    try {
+        const customer = await CustomerModel.query().insert({email, password: hashedPassword, id, accountType: 'customer'})
+        const JWTObj = new JWTHelper()
+        const token = JWTObj.signToken(email, customer.id)
+        res.json({token}).status(200)
+    }
+    catch (err) {
+        console.log(err)
+        Logger.error('Failed to insert Customer')
+        res.status(409).json({error: 'email Already Exist'})
+    }
+}
 
 export const createSeller = async (req: Request, res: Response, next: NextFunction) => {
     const {email, password} = req.body
@@ -79,5 +60,48 @@ export const createSeller = async (req: Request, res: Response, next: NextFuncti
         console.log(err)
         Logger.error('Failed to insert Seller')
         res.status(409).json({error: 'email Already Exist'})
+    }
+}
+
+
+export const loginCustomer = async (req: Request, res: Response, next: NextFunction) => {
+    const {email, password} = req.body
+    const user = await CustomerModel.query().findOne({email})
+    if (!user) {
+            res.status(404).json({error: 'User Not Found'})
+    } else {
+    const bcryptObj = new BcryptHelper(password)
+    
+    const isValid = await bcryptObj.compareHashPassword(user.password)
+    
+    if (isValid) {
+        const JWTObj = new JWTHelper()
+        const token = JWTObj.signToken(email, user.id)
+        res.status(200).json({token})
+    }
+    else {
+        res.status(400).json({error: 'Invalid Credentials'})
+    }
+    }
+}
+
+export const loginSeller = async (req: Request, res: Response, next: NextFunction) => {
+    const {email, password} = req.body
+    const user = await SellerModel.query().findOne({email})
+    if (!user) {
+            res.status(404).json({error: 'User Not Found'})
+    } else {
+    const bcryptObj = new BcryptHelper(password)
+    
+    const isValid = await bcryptObj.compareHashPassword(user.password)
+    
+    if (isValid) {
+        const JWTObj = new JWTHelper()
+        const token = JWTObj.signToken(email, user.id)
+        res.status(200).json({token})
+    }
+    else {
+        res.status(400).json({error: 'Invalid Credentials'})
+    }
     }
 }

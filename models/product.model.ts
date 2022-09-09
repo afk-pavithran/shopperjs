@@ -4,12 +4,12 @@ import knex from '../db'
 Model.knex(knex)
 
 class ProductModel extends Model {
-    id!: number
+    id!: string
     name!: string
     description!: string
     price!: number
     availableCount!: number
-    sellerId!: number
+    sellerId!: string
 
     static get tableName () : string {
         return 'products'
@@ -20,12 +20,12 @@ class ProductModel extends Model {
             type: 'object',
             required: ['name', 'availableCount', 'sellerId', 'price'],
             properties: {
-                id: {type: 'integer'},
+                id: {type: 'string'},
                 name: {type: 'string'},
                 description: {type: 'string'},
                 price: {type: 'integer'},
                 availableCount: {type: 'integer'},
-                sellerId: {type: 'integer'}
+                sellerId: {type: 'string'}
             }
 
         }

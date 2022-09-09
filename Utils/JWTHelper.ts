@@ -6,7 +6,7 @@ dotenv.config()
 interface JwtPayload {
     isValid: boolean
     email: string
-    userId: number
+    id: string
     iat: number
     exp: number
 }
@@ -28,11 +28,11 @@ class JWTHelper {
     }
 
     async verifyToken(token: string) : Promise<JwtPayload> {
-        let status :JwtPayload  = {isValid: false, email: '', userId: 0, iat: 0, exp: 0}
+        let status :JwtPayload  = {isValid: false, email: '', id: '', iat: 0, exp: 0}
         jwt.verify(token, JWTHelper.getSecretKey(), (err, res : any) => {
             if (res) {
-                const {email, userId, iat, exp} = res
-                status = {isValid: true, email, userId, iat, exp}
+                const {email, id, iat, exp} = res
+                status = {isValid: true, email, id, iat, exp}
             }
         })
         return await status
