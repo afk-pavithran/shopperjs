@@ -1,7 +1,10 @@
 import {Pool} from 'pg'
 import Logger from '../Utils/logger'
+import dotenv from 'dotenv'
 
 // const portNumber = parseInt(process.env.DB_PORT) || 5432
+
+dotenv.config()
 
 const client = new Pool({
     user: process.env.DB_USER,
@@ -24,6 +27,7 @@ const createDBFunction = async () => {
     }
 }
 
+// createDBFunction()
 
 import config from '../knexfile'
 import knex from 'knex'

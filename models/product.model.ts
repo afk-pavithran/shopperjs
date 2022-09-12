@@ -10,6 +10,7 @@ class ProductModel extends Model {
     price!: number
     availableCount!: number
     sellerId!: string
+    category!: string
 
     static get tableName () : string {
         return 'products'
@@ -25,7 +26,8 @@ class ProductModel extends Model {
                 description: {type: 'string'},
                 price: {type: 'integer'},
                 availableCount: {type: 'integer'},
-                sellerId: {type: 'string'}
+                sellerId: {type: 'string'},
+                category: {type: 'string'}
             }
 
         }

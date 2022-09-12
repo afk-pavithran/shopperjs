@@ -9,6 +9,7 @@ export async function up(knex: Knex): Promise<void> {
         table.integer('price').notNullable()
         table.integer('availableCount')
         table.string('sellerId')
+        table.string('category')
     })
             
 }
