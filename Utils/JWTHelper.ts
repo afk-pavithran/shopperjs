@@ -34,6 +34,7 @@ class JWTHelper {
                 const {email, id, iat, exp} = res
                 status = {isValid: true, email, id, iat, exp}
             }
+            console.log(err)
         })
         return await status
     }

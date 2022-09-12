@@ -1,6 +1,7 @@
 import {Request, Response, NextFunction} from 'express'
 import { v4 as uuidv4 } from 'uuid'
 import { SellerModel } from '../models'
+import CustomerModel from '../models/customer.model'
 import ProductModel from '../models/product.model'
 import JWTHelper from '../Utils/JWTHelper'
 import Logger from '../Utils/logger'
@@ -97,5 +98,37 @@ export const editProduct = async (req:Request, res: Response, next: NextFunction
     }
     else {
         res.status(200).json({error: 'No Rows Updated'})
+    }
+}
+
+export const buyProduct = async (req:Request, res: Response, next: NextFunction) => {
+    let token : any = ''
+    token = req.headers.token
+    const JWTObj = new JWTHelper()
+    const {isValid, id, email} = await JWTObj.verifyToken(token)
+    const seller = await CustomerModel.query().findOne({email})
+    if (isValid && seller) {
+        const {productId, count} = req.body
+
+        const product = await ProductModel.query().findOne({id: productId})
+        if (product) {
+           const remainingCount : number = product.availableCount - count
+           if(remainingCount < 0) {
+               res.status(400).json({error: 'Not Enough Products available'})
+           }
+           else {
+               const affectedRow = await ProductModel.query().patch({availableCount: remainingCount}).where('id', productId)
+                if (affectedRow > 0) {
+                    res.status(200).json({data: product})
+                }
+                else {
+                    res.status(400).json({error: 'order Failed, server side issue'})
+                }
+            }
+        }
+
+    }
+    else {
+        res.status(400).json({error: 'Invalid Credentials'})
     }
 }
